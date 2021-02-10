@@ -26,3 +26,15 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Background
+The World Health Organization’s purpose for creating a new life-expectancy dataset was to add demographic variables, income composition and mortality rate as factors affecting life expectancy. We saw this as an opportunity to explore the effect education has had on life expectancy. Our data set was sourced from Kaggle using the World Health Organization’s data. 
+
+The Covid-19 pandemic has highlighted the importance of supporting public health in the developing world. We believe this dataset can help inform our understanding of the relationship between education and greater health, which would potentially aid in worldwide efforts for greater physical well-being. 
+
+Our null and alternative hypotheses for this study will be the following:
+	Ho = No correlation between years of schooling and life expectancy
+	Ha = Strong, positive, linear correlation between years of schooling, and life expectancy
+
+We plan to use a simple linear regression model with the R programming language to carry out our computations. We will use known regression diagnostic tools to assess assumptions, and carry out transformations as necessary. Our team will meet in person, and over video calls to complete our study.
+
