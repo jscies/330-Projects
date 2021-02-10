@@ -1,33 +1,15 @@
 ---
 title: "Project 1"
 output: html_document
+author: Joseph Cieselwitz, Garrett Carr, Yuko Ketch, Luke McDowell
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-## Background
+## Background & Introduction
 The World Health Organization’s purpose for creating a new life-expectancy dataset was to add demographic variables, income composition and mortality rate as factors affecting life expectancy. We saw this as an opportunity to explore the effect education has had on life expectancy. Our data set was sourced from Kaggle using the World Health Organization’s data. 
 
 The Covid-19 pandemic has highlighted the importance of supporting public health in the developing world. We believe this dataset can help inform our understanding of the relationship between education and greater health, which would potentially aid in worldwide efforts for greater physical well-being. 
@@ -36,5 +18,7 @@ Our null and alternative hypotheses for this study will be the following:
 	Ho = No correlation between years of schooling and life expectancy
 	Ha = Strong, positive, linear correlation between years of schooling, and life expectancy
 
-We plan to use a simple linear regression model with the R programming language to carry out our computations. We will use known regression diagnostic tools to assess assumptions, and carry out transformations as necessary. Our team will meet in person, and over video calls to complete our study.
+We plan to use a simple linear regression model with the R programming language to carry out our computations. We will use known regression diagnostic tools to assess assumptions, and carry out transformations as necessary. Our team will meet in person, and over video calls to complete our study. 
+
+## Data Story
 
