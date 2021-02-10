@@ -6,20 +6,101 @@ author: Joseph Cieselwitz, Garrett Carr, Yuko Ketch, Luke McDowell
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(car)
+library(ggfortify)
+
 ```
 
 
 ## Background & Introduction
-The World Health Organization’s purpose for creating a new life-expectancy dataset was to add demographic variables, income composition and mortality rate as factors affecting life expectancy. We saw this as an opportunity to explore the effect education has had on life expectancy. Our data set was sourced from Kaggle.com using the World Health Organization’s data. 
+The World Health Organization’s purpose for creating a new life-expectancy dataset was to add demographic variables, income composition and mortality rate as factors affecting life expectancy. We saw this as an opportunity to explore the effect education has had on life expectancy. Our data set was sourced from Kaggle using the World Health Organization’s data. 
 
-The COVID-19 pandemic has highlighted the importance of supporting public health in the developing world. We believe this dataset can help inform our understanding of the relationship between education and greater health, which would potentially aid in worldwide efforts for greater physical well-being. 
+The Covid-19 pandemic has highlighted the importance of supporting public health in the developing world. We believe this dataset can help inform our understanding of the relationship between education and greater health, which would potentially aid in worldwide efforts for greater physical well-being. 
+
+
+```{r cars}
+WHO <- read_csv("Life Expectancy Data.csv", col_names = TRUE) %>% 
+  rename(Life_Exp = `Life expectancy`)
+WHO
+WHO_2015 <- WHO %>% filter(Year == 2015) %>% 
+  select(Country, Life_Exp, Schooling) %>%
+  filter(!(is.na(Schooling)))
+WHO_2015
+```
+
+## Including Plots
 
 Our null and alternative hypotheses for this study will be the following:
 	Ho = No correlation between years of schooling and life expectancy
 	Ha = Strong, positive, linear correlation between years of schooling, and life expectancy
 
+
 We plan to use a simple linear regression model with the R programming language to carry out our computations. We will use known regression diagnostic tools to assess assumptions, and carry out transformations as necessary. Our team will meet in person, and over video calls to complete our study. 
 
-## Methods and Results
 
+```{r pressure}
+# Scatterplot
+life_base <- ggplot(data=WHO_2015, aes(x = Schooling, y = Life_Exp)) + 
+  geom_point()
+
+WHO_2015
+summary(WHO_2015)
+
+ggplot(data=WHO_2015, aes(x = Life_Exp)) +
+  geom_histogram(aes(y=..density..), binwidth = 4)
+
+
+```
+
+
+```{r Assumptions}
+# Linearity
+life_base
+
+life_lm <- lm(data = WHO_2015, Life_Exp ~ Schooling)
+summary(life_lm)
+WHO_2015$residuals <- life_lm$residuals
+
+RvF <- autoplot(life_lm, which = 1, nrow = 1, ncol = 1) + 
+  theme(aspect.ratio=1)
+RvF
+
+```
+
+
+```{r Assumptions}
+# Boxplot of residuals
+ggplot(data = WHO_2015, aes(y=residuals)) + geom_boxplot()
+
+# Histogram of residuals
+stop_hist <- ggplot(data = WHO_2015, aes(x=residuals)) +
+  geom_histogram(aes(y=..density..), binwidth = 3) +
+  #Overlay the normal curve with this mean and sd
+  stat_function(fun = dnorm,
+                size = 2,
+                args = list(mean = mean(WHO_2015$residuals), 
+                            sd = sd(WHO_2015$residuals)))
+
+stop_hist
+
+# QQ Plot
+stop_QQ <- autoplot(life_lm, which = 2, ncol = 1, nrow = 1)
+stop_QQ
+
+shapiro.test(life_lm$residuals)
+
+```
+
+
+```{r Tranformation}
+bc <- boxCox(WHO_2015$Life_Exp ~ WHO_2015$Schooling)
+bc$x[which.max(bc$y)]
+
+WHO_2015$Life_Sq <- WHO_2015$Life_Exp^2
+life_lm_sq <- lm(data = WHO_2015, Life_Sq ~ Schooling)
+summary(life_lm_sq)
+WHO_2015$Residuals_Sq <- life_lm_sq$residuals
+
+
+```
 
