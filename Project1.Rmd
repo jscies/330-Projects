@@ -18,13 +18,13 @@ The World Health Organization’s purpose for creating a new life-expectancy dat
 The Covid-19 pandemic has highlighted the importance of supporting public health in the developing world. We believe this dataset can help inform our understanding of the relationship between education and greater health, which would potentially aid in worldwide efforts for greater physical well-being. 
 
 
-```{r cars}
+```{r data_read}
 WHO <- read_csv("Life Expectancy Data.csv", col_names = TRUE) %>% 
   rename(Life_Exp = `Life expectancy`)
 WHO
 WHO_2015 <- WHO %>% filter(Year == 2015) %>% 
   select(Country, Life_Exp, Schooling) %>%
-  filter(!(is.na(Schooling)))
+  filter(!(is.na(Schooling))) 
 WHO_2015
 ```
 
@@ -62,7 +62,7 @@ summary(life_lm)
 WHO_2015$residuals <- life_lm$residuals
 
 RvF <- autoplot(life_lm, which = 1, nrow = 1, ncol = 1) + 
-  theme(aspect.ratio=1)
+  theme(aspect.ratio = 1)
 RvF
 
 ```
@@ -96,11 +96,118 @@ shapiro.test(life_lm$residuals)
 bc <- boxCox(WHO_2015$Life_Exp ~ WHO_2015$Schooling)
 bc$x[which.max(bc$y)]
 
-WHO_2015$Life_Sq <- WHO_2015$Life_Exp^2
+WHO_2015$Life_Sq <- WHO_2015$Life_Exp^3
 life_lm_sq <- lm(data = WHO_2015, Life_Sq ~ Schooling)
 summary(life_lm_sq)
 WHO_2015$Residuals_Sq <- life_lm_sq$residuals
 
 
+WHO_2015$Schooling_Sq <- WHO_2015$Schooling^3
+life_lm_x_sq <- lm(data = WHO_2015, Life_Exp ~ Schooling_Sq)
+WHO_2015$Residuals_x_Sq <- life_lm_x_sq$residuals
+
+life_lm_xy_sq <- lm(data = WHO_2015, Life_Sq ~ Schooling_Sq)
+WHO_2015$Residuals_xy_Sq <- life_lm_xy_sq$residuals
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Checking Normality
+
+We check using the boxplot
+```{r boxplots}
+# Box Plot
+ggplot(data = WHO_2015, aes(y=Residuals_Sq)) + 
+  geom_boxplot()
+
+ggplot(data = WHO_2015, aes(y=Residuals_x_Sq)) + 
+  geom_boxplot()
+
+ggplot(data = WHO_2015, aes(y=Residuals_xy_Sq)) + 
+  geom_boxplot()
+
+```
+
+```{r histograms}
+# Histogram
+WHO_hist_sq <- ggplot(data = WHO_2015, mapping = aes(x = Residuals_Sq)) + 
+  geom_histogram(mapping = aes(y = ..density..)) +
+  stat_function(fun = dnorm, 
+                color = "red", 
+                size = 2,
+                args = list(mean = mean(WHO_2015$Residuals_Sq), 
+                            sd = sd(WHO_2015$Residuals_Sq))) 
+WHO_hist_sq
+
+WHO_hist_sq_x <- ggplot(data = WHO_2015, mapping = aes(x = Residuals_x_Sq)) + 
+  geom_histogram(mapping = aes(y = ..density..)) +
+  stat_function(fun = dnorm, 
+                color = "red", 
+                size = 2,
+                args = list(mean = mean(WHO_2015$Residuals_x_Sq), 
+                            sd = sd(WHO_2015$Residuals_x_Sq))) 
+WHO_hist_sq_x
+
+WHO_hist_sq_xy <- ggplot(data = WHO_2015, mapping = aes(x = Residuals_xy_Sq)) + 
+  geom_histogram(mapping = aes(y = ..density..)) +
+  stat_function(fun = dnorm, 
+                color = "red", 
+                size = 2,
+                args = list(mean = mean(WHO_2015$Residuals_xy_Sq), 
+                            sd = sd(WHO_2015$Residuals_xy_Sq))) 
+WHO_hist_sq_x
+```
+
+```{r probability-plot}
+
+# Probability plot
+stop_QQ_sq <- autoplot(life_lm_sq, which = 2, ncol = 1, nrow = 1)
+stop_QQ_sq
+
+stop_QQ_x_sq <- autoplot(life_lm_x_sq, which = 2, ncol = 1, nrow = 1)
+stop_QQ_x_sq
+
+stop_QQ_xy_sq <- autoplot(life_lm_xy_sq, which = 2, ncol = 1, nrow = 1)
+stop_QQ_xy_sq
+```
+
+```{r Shapiro-test}
+# Shapiro-Wilk Test
+shapiro.test(life_lm_sq$residuals)
+
+shapiro.test(life_lm_x_sq$residuals)
+
+shapiro.test(life_lm_xy_sq$residuals)
 ```
 
